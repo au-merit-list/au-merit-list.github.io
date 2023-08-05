@@ -1,7 +1,7 @@
 d3.csv("list.csv").then(function (data) {
   // console.log(data);
 
-  var movies = data;
+  var list = data;
 
   var button = d3.select("#button");
 
@@ -18,7 +18,6 @@ d3.csv("list.csv").then(function (data) {
     var inputValue = inputElement.property("value").toLowerCase().trim();
 
     // console.log(inputValue.length);
-    // console.log(movies);
     if (inputValue.length < 4) {
       d3.select("p")
         .classed("noresults2", true)
@@ -27,9 +26,18 @@ d3.csv("list.csv").then(function (data) {
         );
       inputValue = "Something to give no results";
     }
-    var filteredData = movies.filter((movies) =>
-      movies.fullname.toLowerCase().trim().includes(inputValue),
+    var filteredData = list.filter((list) =>
+      list.fullname.toLowerCase().trim().includes(inputValue),
     );
+
+    if (
+      filteredData.length === 0 &&
+      inputValue !== "Something to give no results"
+    ) {
+      var filteredData = list.filter((list) =>
+        list.admit_card.trim().includes(inputValue),
+      );
+    }
     // console.log(filteredData.length)
     if (
       filteredData.length === 0 &&
@@ -37,16 +45,11 @@ d3.csv("list.csv").then(function (data) {
     ) {
       d3.select("p")
         .classed("noresults", true)
-        .html(
-          "<center><strong>No results. Please check your spelling!</strong>",
-        );
+        .html("<center><strong>No results.</strong>");
     }
     output = _.sortBy(filteredData, "merit_score").reverse();
 
     for (var i = 0; i < filteredData.length; i++) {
-      // console.log(output[i]['original_title'])
-      // console.log(output[i]['avg_vote'])
-      // d3.select("tbody>tr>td").text(output[i]['original_title']);
       d3.select("tbody")
         .insert("tr")
         .html(
